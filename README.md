@@ -1,2 +1,2 @@
 # Rabbit
-RabbtiMQ DEMO(基于PHP，以及Golang)
+RabbtiMQ DEMO(基于PHP)
