@@ -9,7 +9,10 @@ $exchange = 'router';
 $queue = 'msgs';
 $consumerTag = 'consumer';
 
+
+// 第一步，创建连接
 $connection = new AMQPStreamConnection(HOST, PORT, USER, PASS, VHOST);
+// 第二步，创建频道实例
 $channel = $connection->channel();
 
 /*
@@ -25,6 +28,7 @@ $channel = $connection->channel();
     exclusive: false // the queue can be accessed in other channels
     auto_delete: false //the queue won't be deleted once the channel is closed.
 */
+// 第三步，声明队列
 $channel->queue_declare($queue, false, true, false, false);
 
 /*
@@ -34,12 +38,14 @@ $channel->queue_declare($queue, false, true, false, false);
     durable: true // the exchange will survive server restarts
     auto_delete: false //the exchange won't be deleted once the channel is closed.
 */
-
+// 第四步，声明交换机
 $channel->exchange_declare($exchange, AMQPExchangeType::DIRECT, false, true, false);
 
+// 第五步，交换机绑定队列
 $channel->queue_bind($queue, $exchange);
 
 /**
+ * 消费信息函数
  * @param \PhpAmqpLib\Message\AMQPMessage $message
  */
 function process_message($message)
@@ -65,10 +71,11 @@ function process_message($message)
     nowait:
     callback: A PHP Callback
 */
-
+// 第六步，开启消费队列
 $channel->basic_consume($queue, $consumerTag, false, false, false, false, 'process_message');
 
 /**
+ * 关闭消费队列
  * @param \PhpAmqpLib\Channel\AMQPChannel $channel
  * @param \PhpAmqpLib\Connection\AbstractConnection $connection
  */
